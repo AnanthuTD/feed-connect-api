@@ -1,21 +1,17 @@
-// app.js
-const express = require('express');
-const bodyParser = require('body-parser');
+import express, { urlencoded, static as expressStatic, json } from "express";
+import router from "./routes";
+import cookieParser from "cookie-parser";
 const app = express();
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 
-    
+app.use(urlencoded({ extended: true }));
+app.use(expressStatic("public"));
+app.use(cookieParser());
+app.use(json())
 
-// Set EJS as the template engine
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
-
-// Define routes
-const userRoutes = require('./routes/userRoutes');
-app.use('/users', userRoutes);
+app.use("/", router);
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server running on port:${PORT}`)
-  })
+	console.log(`Server running on port:${PORT}`);
+});
