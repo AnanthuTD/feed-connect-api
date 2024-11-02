@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The **Social Media Feed** API provides a robust backend for managing user interactions, posts, and real-time updates in a social media application. This API utilizes both RESTful and GraphQL endpoints to deliver a flexible and scalable solution for client applications.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "dotenvx run -- node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
