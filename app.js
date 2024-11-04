@@ -1,6 +1,8 @@
 import express, { urlencoded, static as expressStatic, json } from 'express'
 import router from './routes'
+
 import cookieParser from 'cookie-parser'
+
 const app = express()
 const PORT = process.env.PORT || 3000
 
