@@ -2,13 +2,45 @@
 ### Do not make changes to this file directly
 
 
+type Comment {
+  author: User
+  content: String
+  createdAt: String
+  id: ID
+  post: Post
+}
+
+type Like {
+  createdAt: String
+  id: ID
+  post: Post
+  user: User
+}
+
+type Post {
+  author: User
+  comments: [Comment]
+  content: String
+  createdAt: String
+  id: ID
+  imageUrl: String!
+  likes: [Like]
+  updatedAt: String
+}
+
 type Query {
+  like(id: String): Like
   user(id: String): User
 }
 
 type User {
+  comments: [Comment]
   createdAt: String
   email: String
+  followedBy: [User]
+  following: [User]
   id: ID
+  likes: [Like]
+  posts: [Post]
   username: String
 }

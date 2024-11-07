@@ -22,6 +22,25 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+    Comment: {
+        // root type
+        content?: string | null // String
+        createdAt?: string | null // String
+        id?: string | null // ID
+    }
+    Like: {
+        // root type
+        createdAt?: string | null // String
+        id?: string | null // ID
+    }
+    Post: {
+        // root type
+        content?: string | null // String
+        createdAt?: string | null // String
+        id?: string | null // ID
+        imageUrl: string // String!
+        updatedAt?: string | null // String
+    }
     Query: {}
     User: {
         // root type
@@ -41,35 +60,103 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+    Comment: {
+        // field return type
+        author: NexusGenRootTypes['User'] | null // User
+        content: string | null // String
+        createdAt: string | null // String
+        id: string | null // ID
+        post: NexusGenRootTypes['Post'] | null // Post
+    }
+    Like: {
+        // field return type
+        createdAt: string | null // String
+        id: string | null // ID
+        post: NexusGenRootTypes['Post'] | null // Post
+        user: NexusGenRootTypes['User'] | null // User
+    }
+    Post: {
+        // field return type
+        author: NexusGenRootTypes['User'] | null // User
+        comments: Array<NexusGenRootTypes['Comment'] | null> | null // [Comment]
+        content: string | null // String
+        createdAt: string | null // String
+        id: string | null // ID
+        imageUrl: string // String!
+        likes: Array<NexusGenRootTypes['Like'] | null> | null // [Like]
+        updatedAt: string | null // String
+    }
     Query: {
         // field return type
+        like: NexusGenRootTypes['Like'] | null // Like
         user: NexusGenRootTypes['User'] | null // User
     }
     User: {
         // field return type
+        comments: Array<NexusGenRootTypes['Comment'] | null> | null // [Comment]
         createdAt: string | null // String
         email: string | null // String
+        followedBy: Array<NexusGenRootTypes['User'] | null> | null // [User]
+        following: Array<NexusGenRootTypes['User'] | null> | null // [User]
         id: string | null // ID
+        likes: Array<NexusGenRootTypes['Like'] | null> | null // [Like]
+        posts: Array<NexusGenRootTypes['Post'] | null> | null // [Post]
         username: string | null // String
     }
 }
 
 export interface NexusGenFieldTypeNames {
+    Comment: {
+        // field return type name
+        author: 'User'
+        content: 'String'
+        createdAt: 'String'
+        id: 'ID'
+        post: 'Post'
+    }
+    Like: {
+        // field return type name
+        createdAt: 'String'
+        id: 'ID'
+        post: 'Post'
+        user: 'User'
+    }
+    Post: {
+        // field return type name
+        author: 'User'
+        comments: 'Comment'
+        content: 'String'
+        createdAt: 'String'
+        id: 'ID'
+        imageUrl: 'String'
+        likes: 'Like'
+        updatedAt: 'String'
+    }
     Query: {
         // field return type name
+        like: 'Like'
         user: 'User'
     }
     User: {
         // field return type name
+        comments: 'Comment'
         createdAt: 'String'
         email: 'String'
+        followedBy: 'User'
+        following: 'User'
         id: 'ID'
+        likes: 'Like'
+        posts: 'Post'
         username: 'String'
     }
 }
 
 export interface NexusGenArgTypes {
     Query: {
+        like: {
+            // args
+            id?: string | null // String
+        }
         user: {
             // args
             id?: string | null // String

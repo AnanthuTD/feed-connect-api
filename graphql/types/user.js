@@ -6,7 +6,7 @@ const User = objectType({
         t.id('id')
         t.string('username')
         t.string('email')
-        /* t.list.field('posts', {
+        t.list.field('posts', {
             type: 'Post',
             resolve: (parent, _args, context) =>
                 context.prisma.post.findMany({
@@ -40,7 +40,7 @@ const User = objectType({
                 context.prisma.user.findMany({
                     where: { followedByIDs: { has: parent.id } },
                 }),
-        }) */
+        })
         t.string('createdAt')
     },
 })
