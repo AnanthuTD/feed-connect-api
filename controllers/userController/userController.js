@@ -1,4 +1,4 @@
-import prisma from '../../prismaClient'
+import prisma from '../../prismaClient.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { body, validationResult } from 'express-validator'
@@ -177,7 +177,7 @@ const logoutUser = async (req, res) => {
     res.redirect('/') // Redirect to home page
 }
 
-module.exports = {
+export {
     getHome,
     showCreateUserForm,
     createUser,
