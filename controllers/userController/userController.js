@@ -44,24 +44,36 @@ const showCreateUserForm = async (req, res) => {
 // Create new user - POST method
 const createUser = async (req, res) => {
     // Validate input fields
-    await body('name').notEmpty().withMessage('Name is required').run(req)
+    await body('phoneOrEmail')
+        .notEmpty()
+        .withMessage('Phone number or email is required')
+        .custom((value) => {
+            const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+            const isPhone = /^[0-9]{10,15}$/.test(value) // Adjust regex as per your phone format
+            if (!isEmail && !isPhone) {
+                throw new Error('Must be a valid phone number or email')
+            }
+            return true
+        })
+        .run(req)
+
+    await body('fullName')
+        .notEmpty()
+        .withMessage('Full name is required')
+        .run(req)
+
     await body('username')
         .notEmpty()
         .withMessage('Username is required')
         .run(req)
-    await body('email').isEmail().withMessage('Invalid email format').run(req)
+
     await body('password')
         .isLength({ min: 6 })
         .withMessage('Password must be at least 6 characters')
         .run(req)
-    await body('confirmPassword')
-        .custom((value, { req }) => value === req.body.password)
-        .withMessage('Passwords do not match')
-        .run(req)
 
     // Check for validation errors
     const errors = validationResult(req)
-
     if (!errors.isEmpty()) {
         return res.status(400).json({
             success: false,
@@ -69,35 +81,46 @@ const createUser = async (req, res) => {
         })
     }
 
-    const { name, username, email, password } = req.body
+    const { fullName, username, phoneOrEmail, password } = req.body
 
     try {
+        // Check if the email or phone number is already registered
         const userExists = await prisma.user.findUnique({
-            where: { email },
+            where: {
+                OR: [{ email: phoneOrEmail }, { phone: phoneOrEmail }],
+            },
         })
 
         if (userExists) {
             return res.status(400).json({
                 success: false,
-                errors: ['Email is already registered'],
+                errors: ['Email or phone number is already registered'],
             })
         }
 
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10)
 
+        // Create the new user
         const newUser = await prisma.user.create({
             data: {
-                name,
+                fullName,
                 username,
-                email,
+                email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(phoneOrEmail)
+                    ? phoneOrEmail
+                    : null,
+                phone: /^[0-9]{10,15}$/.test(phoneOrEmail)
+                    ? phoneOrEmail
+                    : null,
                 password: hashedPassword,
             },
         })
 
+        // Generate JWT token
         const token = jwt.sign(
             {
                 userId: newUser.id,
-                email: newUser.email,
+                username: newUser.username,
             },
             JWT_SECRET,
             { expiresIn: '1h' }
@@ -107,7 +130,7 @@ const createUser = async (req, res) => {
             success: true,
             data: {
                 userId: newUser.id,
-                email: newUser.email,
+                username: newUser.username,
                 token: token,
             },
         })
