@@ -28,6 +28,7 @@ export class ProfileController {
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             phone: user.phone,
+            avatar: user.avatar,
         }
 
         res.json({ user: userResponseData })
