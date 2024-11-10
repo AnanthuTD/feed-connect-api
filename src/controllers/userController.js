@@ -48,11 +48,6 @@ const handleRefreshToken = async (req, res) => {
     }
 }
 
-// Render signup form - GET method
-const showCreateUserForm = async (req, res) => {
-    res.render('createUser')
-}
-
 // Create new user - POST method
 const createUser = async (req, res) => {
     console.log(req.body)
@@ -156,62 +151,82 @@ const createUser = async (req, res) => {
     }
 }
 
-// Render login page - GET method
-const showLoginForm = async (req, res) => {
-    res.render('login')
-}
-
 // Login user - POST method
 const loginUser = async (req, res) => {
-    const { emailOrUsername, password } = req.body
+    // Validate input fields
+    await body('phone_email_username')
+        .notEmpty()
+        .withMessage('Phone number, username, or email is required')
+        .run(req)
+
+    await body('password')
+        .notEmpty()
+        .withMessage('Password is required')
+        .run(req)
+
+    // Check for validation errors
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            success: false,
+            errors: errors.array().map((error) => error.msg),
+        })
+    }
+
+    const { phone_email_username, password } = req.body
 
     try {
+        // Find user by email, phone, or username
         const user = await prisma.user.findFirst({
             where: {
-                OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
+                OR: [
+                    { email: phone_email_username },
+                    { phone: phone_email_username },
+                    { username: phone_email_username },
+                ],
             },
         })
 
         if (!user) {
             return res.status(400).json({
                 success: false,
-                errors: ['Invalid email or password'],
+                errors: ['User not found with provided identifier'],
             })
         }
 
-        // Compare the hashed password with the password from the request
+        // Verify password
         const isPasswordValid = await bcrypt.compare(password, user.password)
-
         if (!isPasswordValid) {
             return res.status(400).json({
                 success: false,
-                errors: ['Invalid email or password'],
+                errors: ['Invalid password'],
             })
         }
 
-        const accessToken = new JWTService().generateAccessToken({
-            id: user.id,
-        })
-        const refreshToken = new JWTService().generateAccessToken({
-            id: user.id,
-        })
+        // Generate tokens
+        const accessToken = jwtService.generateAccessToken({ id: user.id })
+        const refreshToken = jwtService.generateRefreshToken({ id: user.id })
 
-        // Store refresh token securely
+        // Store refresh token in the database
         await refreshTokenRepo.storeRefreshToken(user.id, refreshToken)
 
+        // Set refresh token as a cookie
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            maxAge: 3600000,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         })
 
-        res.json({
+        // Respond with access token
+        res.status(200).json({
+            success: true,
             accessToken,
-            user: {
-                userName: user.username,
-            },
+            userId: user.id,
+            username: user.username,
         })
     } catch (error) {
-        console.error('Login error:', error)
+        console.error('Error logging in user:', error)
         res.status(500).json({
             success: false,
             errors: ['An error occurred during login'],
@@ -227,11 +242,4 @@ const logoutUser = async (req, res) => {
     res.json({ message: 'Logged out successfully' })
 }
 
-export {
-    handleRefreshToken,
-    showCreateUserForm,
-    createUser,
-    showLoginForm,
-    loginUser,
-    logoutUser,
-}
+export { handleRefreshToken, createUser, loginUser, logoutUser }
