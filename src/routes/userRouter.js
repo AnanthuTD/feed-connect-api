@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import {
-    showLoginForm,
     logoutUser,
     loginUser,
     createUser,
@@ -13,7 +12,6 @@ const userRouter = Router()
 // userRouter.get('/create', showCreateUserForm)
 userRouter.post('/signup', createUser)
 
-userRouter.get('/login', showLoginForm)
 userRouter.post('/login', loginUser)
 userRouter.post('/logout', logoutUser)
 
