@@ -25,4 +25,32 @@ export class RefreshTokenRepository {
     deleteRefreshToken(refreshToken) {
         return prisma.refreshToken.delete({ where: { token: refreshToken } })
     }
+
+    async getRefreshToken(token) {
+        try {
+            const refreshToken = await prisma.refreshToken.findFirst({
+                where: { token },
+            })
+
+            if (!refreshToken) {
+                throw new Error('Refresh token not found')
+            }
+
+            const decoded = new JWTService().verifyRefreshToken(
+                refreshToken.token
+            )
+
+            if (!decoded || decoded.exp < Date.now() / 1000) {
+                await prisma.refreshToken.delete({
+                    where: { token },
+                })
+                throw new Error('Refresh token expired')
+            }
+
+            return decoded
+        } catch (error) {
+            console.error('Error verifying refresh token:', error.message)
+            throw error
+        }
+    }
 }
