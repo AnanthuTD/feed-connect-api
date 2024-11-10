@@ -1,7 +1,7 @@
-import prisma from '../../prismaClient'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { body, validationResult } from 'express-validator'
+import prisma from '../prismaClient.js'
 
 // Secret key for JWT, use environment variable in production
 const JWT_SECRET = 'secretkeyappearshere'
@@ -177,7 +177,7 @@ const logoutUser = async (req, res) => {
     res.redirect('/') // Redirect to home page
 }
 
-module.exports = {
+export {
     getHome,
     showCreateUserForm,
     createUser,

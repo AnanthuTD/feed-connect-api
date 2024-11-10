@@ -1,12 +1,9 @@
 import { Router } from 'express'
 import {
-    // getHome,
-    // showCreateUserForm,
-    // createUser,
     showLoginForm,
-    loginUser,
     logoutUser,
-} from '../controllers/userController/userController'
+    loginUser,
+} from '../controllers/userController.js'
 
 const userRouter = Router()
 
