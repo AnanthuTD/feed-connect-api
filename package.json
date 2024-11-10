@@ -10,6 +10,7 @@
     "scripts": {
         "dev": "nodemon ./src/app.js",
         "start": "dotenvx run -- node app.js",
+        "prisma:generate": "npx prisma generate",
         "format:check": "prettier --check .",
         "format:write": "prettier --write .",
         "lint:check": "eslint .",
