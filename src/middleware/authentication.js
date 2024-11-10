@@ -1,6 +1,4 @@
-// middleware/authentication.js
-
-const jwt = require('jsonwebtoken')
+import { JWTService } from '../services/jwtServices'
 
 const authenticate = (req, res, next) => {
     // Extract token from the authorization header
@@ -17,10 +15,9 @@ const authenticate = (req, res, next) => {
 
     try {
         // Verify token with secret key
-        const decodedToken = jwt.verify(token, 'secretkeyappearshere')
+        const decodedToken = new JWTService().verifyAccessToken(token)
         req.userData = {
-            userId: decodedToken.userId,
-            email: decodedToken.email,
+            userId: decodedToken.id,
         }
         next() // Proceed if token is valid
     } catch (error) {
@@ -33,4 +30,4 @@ const authenticate = (req, res, next) => {
     }
 }
 
-module.exports = authenticate
+export default authenticate
