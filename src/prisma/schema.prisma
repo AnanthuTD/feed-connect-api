@@ -9,8 +9,10 @@ datasource db {
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  fullName      String
   username      String    @unique
-  email         String    @unique
+  email         String?   @unique
+  phone         String?   @unique
   password      String
   posts         Post[]
   comments      Comment[]
@@ -20,6 +22,16 @@ model User {
   following     User[]    @relation("UserFollows", fields: [followingIDs], references: [id])
   followingIDs  String[]  @db.ObjectId
   createdAt     DateTime  @default(now())
+  refreshTokens  RefreshToken[] @relation("UserRefreshTokens")
+}
+
+model RefreshToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String
+  userId    String   @db.ObjectId
+  user      User     @relation("UserRefreshTokens", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }
 
 model Post {
