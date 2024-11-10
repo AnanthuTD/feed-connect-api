@@ -4,6 +4,7 @@ import {
     logoutUser,
     loginUser,
     createUser,
+    handleRefreshToken,
 } from '../controllers/userController.js'
 
 const userRouter = Router()
@@ -15,5 +16,7 @@ userRouter.post('/signup', createUser)
 userRouter.get('/login', showLoginForm)
 userRouter.post('/login', loginUser)
 userRouter.post('/logout', logoutUser)
+
+userRouter.post('/refresh-token', handleRefreshToken)
 
 export default userRouter
