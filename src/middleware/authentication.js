@@ -1,11 +1,8 @@
-import { JWTService } from '../services/jwtServices'
+import { JWTService } from '../services/jwtServices.js'
 
-const authenticate = (req, res, next) => {
-    // Extract token from the authorization header
-    const token =
-        req.headers.authorization && req.headers.authorization.split(' ')[1]
+export const authenticate = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1]
 
-    // If no token is found, send an error response
     if (!token) {
         return res.status(401).json({
             message:
@@ -14,14 +11,10 @@ const authenticate = (req, res, next) => {
     }
 
     try {
-        // Verify token with secret key
         const decodedToken = new JWTService().verifyAccessToken(token)
-        req.userData = {
-            userId: decodedToken.id,
-        }
-        next() // Proceed if token is valid
+        req.user = { id: decodedToken.id }
+        next()
     } catch (error) {
-        // If verification fails, send an error response
         console.log('Authentication failed! ', error)
         return res.status(401).json({
             message:
@@ -29,5 +22,3 @@ const authenticate = (req, res, next) => {
         })
     }
 }
-
-export default authenticate
