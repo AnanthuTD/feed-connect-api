@@ -1,35 +1,47 @@
-import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { body, validationResult } from 'express-validator'
 import prisma from '../prismaClient.js'
+import { JWTService } from '../services/jwtServices.js'
+import { RefreshTokenRepository } from '../repositories/RefreshTokenRepository.js'
 
-// Secret key for JWT, use environment variable in production
-const JWT_SECRET = 'secretkeyappearshere'
+const jwtService = new JWTService()
+const refreshTokenRepo = new RefreshTokenRepository()
 
-// Render the home page - GET method
-const getHome = async (req, res) => {
+const handleRefreshToken = async (req, res) => {
     try {
-        // Check for the token in cookies
-        const token = req.cookies.token
+        const refreshToken = req.cookies.refreshToken
+        if (!refreshToken)
+            return res.status(401).json({ error: 'No token provided' })
 
-        if (token) {
-            // Verify the token
-            const decoded = jwt.verify(token, JWT_SECRET)
+        // Verify refresh token
+        try {
+            const decoded = await refreshTokenRepo.getRefreshToken(refreshToken)
 
-            // Find the user in the database using the userId from token
-            const user = await prisma.user.findUnique({
-                where: { id: decoded.userId },
+            const user = await prisma.user.findFirst(decoded.id)
+            if (!user) return res.status(401).json({ error: 'User not found' })
+
+            // Generate a new access token
+            const newAccessToken = jwtService.generateAccessToken(user)
+
+            // Generate new refresh token ( refresh token rotation )
+            const newRefreshToken = jwtService.generateRefreshToken(user)
+            await refreshTokenRepo.storeRefreshToken(user.id, newRefreshToken)
+
+            // Set the new refresh token in the cookie
+            res.cookie('refreshToken', newRefreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'strict',
             })
 
-            if (user) {
-                // Render home page for logged-in user
-                res.render('home', { user })
-                return
-            }
+            // Send new access token to the client
+            res.json({ accessToken: newAccessToken })
+        } catch (error) {
+            res.status(403).json({
+                message: error.message || 'Invalid refresh token',
+            })
+            console.log(error)
         }
-
-        // Render home page for guest (not logged in)
-        res.render('home', { user: null })
     } catch (error) {
         console.error('Error fetching home page:', error)
         res.status(500).send('Error fetching home page')
@@ -43,6 +55,7 @@ const showCreateUserForm = async (req, res) => {
 
 // Create new user - POST method
 const createUser = async (req, res) => {
+    console.log(req.body)
     // Validate input fields
     await body('phoneOrEmail')
         .notEmpty()
@@ -85,7 +98,7 @@ const createUser = async (req, res) => {
 
     try {
         // Check if the email or phone number is already registered
-        const userExists = await prisma.user.findUnique({
+        const userExists = await prisma.user.findFirst({
             where: {
                 OR: [{ email: phoneOrEmail }, { phone: phoneOrEmail }],
             },
@@ -116,23 +129,23 @@ const createUser = async (req, res) => {
             },
         })
 
-        // Generate JWT token
-        const token = jwt.sign(
-            {
-                userId: newUser.id,
-                username: newUser.username,
-            },
-            JWT_SECRET,
-            { expiresIn: '1h' }
-        )
+        const accessToken = new JWTService().generateAccessToken({
+            id: newUser.id,
+        })
+        const refreshToken = new JWTService().generateAccessToken({
+            id: newUser.id,
+        })
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 3600000,
+        })
 
         res.status(201).json({
             success: true,
-            data: {
-                userId: newUser.id,
-                username: newUser.username,
-                token: token,
-            },
+            userId: newUser.id,
+            username: newUser.username,
+            accessToken,
         })
     } catch (error) {
         console.error('Error creating user:', error)
@@ -150,15 +163,17 @@ const showLoginForm = async (req, res) => {
 
 // Login user - POST method
 const loginUser = async (req, res) => {
-    const { email, password } = req.body
+    const { emailOrUsername, password } = req.body
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { email },
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [{ email: emailOrUsername }, { username: emailOrUsername }],
+            },
         })
 
         if (!user) {
-            return res.status(401).json({
+            return res.status(400).json({
                 success: false,
                 errors: ['Invalid email or password'],
             })
@@ -168,24 +183,33 @@ const loginUser = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password)
 
         if (!isPasswordValid) {
-            return res.status(401).json({
+            return res.status(400).json({
                 success: false,
                 errors: ['Invalid email or password'],
             })
         }
 
-        const token = jwt.sign(
-            {
-                userId: user.id,
-                email: user.email,
+        const accessToken = new JWTService().generateAccessToken({
+            id: user.id,
+        })
+        const refreshToken = new JWTService().generateAccessToken({
+            id: user.id,
+        })
+
+        // Store refresh token securely
+        await refreshTokenRepo.storeRefreshToken(user.id, refreshToken)
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 3600000,
+        })
+
+        res.json({
+            accessToken,
+            user: {
+                userName: user.username,
             },
-            JWT_SECRET,
-            { expiresIn: '1h' }
-        )
-
-        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 })
-
-        res.redirect('/')
+        })
     } catch (error) {
         console.error('Login error:', error)
         res.status(500).json({
@@ -196,12 +220,15 @@ const loginUser = async (req, res) => {
 }
 
 const logoutUser = async (req, res) => {
-    res.clearCookie('token') // Clear the token cookie
-    res.redirect('/') // Redirect to home page
+    const refreshToken = req.cookies.refreshToken
+    await refreshTokenRepo.deleteRefreshToken(refreshToken)
+
+    res.clearCookie('refreshToken')
+    res.json({ message: 'Logged out successfully' })
 }
 
 export {
-    getHome,
+    handleRefreshToken,
     showCreateUserForm,
     createUser,
     showLoginForm,
