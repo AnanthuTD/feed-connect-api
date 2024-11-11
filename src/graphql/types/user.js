@@ -1,4 +1,4 @@
-import { extendType, objectType, stringArg } from 'nexus'
+import { extendType, idArg, objectType } from 'nexus'
 
 const User = objectType({
     name: 'User',
@@ -50,8 +50,8 @@ const UserQueries = extendType({
     definition(t) {
         t.field('user', {
             type: 'User',
-            args: { id: stringArg('id of user') },
-            resolve: (_parent, args, context) =>
+            args: { id: idArg({ description: 'id of user' }) },
+            resolve: async (_parent, args, context) =>
                 context.prisma.user.findUnique({
                     where: { id: args.id },
                 }),
