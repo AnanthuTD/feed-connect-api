@@ -17,7 +17,9 @@ const handleRefreshToken = async (req, res) => {
         try {
             const decoded = await refreshTokenRepo.getRefreshToken(refreshToken)
 
-            const user = await prisma.user.findFirst(decoded.id)
+            const user = await prisma.user.findFirst({
+                where: { id: decoded.id },
+            })
             if (!user) return res.status(401).json({ error: 'User not found' })
 
             // Generate a new access token
@@ -37,7 +39,7 @@ const handleRefreshToken = async (req, res) => {
             // Send new access token to the client
             res.json({ accessToken: newAccessToken })
         } catch (error) {
-            res.status(403).json({
+            res.status(401).json({
                 message: error.message || 'Invalid refresh token',
             })
             console.log(error)
