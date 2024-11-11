@@ -1,5 +1,6 @@
 import prisma from '../prismaClient.js'
 
-export const context = {
+export const createContext = ({ req }) => ({
     prisma,
-}
+    user: req.user,
+})
