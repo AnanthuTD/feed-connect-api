@@ -154,7 +154,7 @@ const createUser = async (req, res) => {
 // Login user - POST method
 const loginUser = async (req, res) => {
     // Validate input fields
-    await body('phone_email_username')
+    await body('phoneEmailUsername')
         .notEmpty()
         .withMessage('Phone number, username, or email is required')
         .run(req)
@@ -173,16 +173,16 @@ const loginUser = async (req, res) => {
         })
     }
 
-    const { phone_email_username, password } = req.body
+    const { phoneEmailUsername, password } = req.body
 
     try {
         // Find user by email, phone, or username
         const user = await prisma.user.findFirst({
             where: {
                 OR: [
-                    { email: phone_email_username },
-                    { phone: phone_email_username },
-                    { username: phone_email_username },
+                    { email: phoneEmailUsername },
+                    { phone: phoneEmailUsername },
+                    { username: phoneEmailUsername },
                 ],
             },
         })
