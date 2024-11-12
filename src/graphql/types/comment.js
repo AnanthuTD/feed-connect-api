@@ -1,25 +1,14 @@
 import { objectType } from 'nexus'
+import np from 'nexus-prisma'
 
 const Comment = objectType({
     name: 'Comment',
     definition(t) {
         t.id('id')
         t.string('content')
-        t.field('author', {
-            type: 'User',
-            resolve: (parent, _args, context) =>
-                context.prisma.user.findUnique({
-                    where: { id: parent.authorId },
-                }),
-        })
-        t.field('post', {
-            type: 'Post',
-            resolve: (parent, _args, context) =>
-                context.prisma.post.findUnique({
-                    where: { id: parent.postId },
-                }),
-        })
-        t.string('createdAt')
+        t.field(np.Comment.author)
+        t.field(np.Comment.post)
+        t.field(np.Comment.createdAt)
     },
 })
 

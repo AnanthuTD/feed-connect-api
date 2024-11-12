@@ -1,4 +1,5 @@
 import { objectType } from 'nexus'
+import np from 'nexus-prisma'
 
 const Post = objectType({
     name: 'Post',
@@ -6,29 +7,11 @@ const Post = objectType({
         t.id('id')
         t.string('content')
         t.nonNull.string('imageUrl')
-        t.field('author', {
-            type: 'User',
-            resolve: (parent, _args, context) =>
-                context.prisma.user.findUnique({
-                    where: { id: parent.authorId },
-                }),
-        })
-        t.list.field('comments', {
-            type: 'Comment',
-            resolve: (parent, _args, context) =>
-                context.prisma.comment.findMany({
-                    where: { postId: parent.id },
-                }),
-        })
-        t.list.field('likes', {
-            type: 'Like',
-            resolve: (parent, _args, context) =>
-                context.prisma.like.findMany({
-                    where: { postId: parent.id },
-                }),
-        })
-        t.string('createdAt')
-        t.string('updatedAt')
+        t.field(np.Post.author)
+        t.list.field(np.Post.comments)
+        t.list.field(np.Post.likes)
+        t.field(np.Post.createdAt)
+        t.field(np.Post.updatedAt)
     },
 })
 

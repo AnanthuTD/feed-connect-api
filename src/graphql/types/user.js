@@ -1,47 +1,21 @@
 import { extendType, idArg, objectType } from 'nexus'
+import np from 'nexus-prisma'
 
 const User = objectType({
-    name: 'User',
+    name: np.User.$name,
+    description: np.User.$description,
     definition(t) {
-        t.id('id')
+        t.field(np.User.id)
         t.string('username')
         t.string('email')
-        t.list.field('posts', {
-            type: 'Post',
-            resolve: (parent, _args, context) =>
-                context.prisma.post.findMany({
-                    where: { authorId: parent.id },
-                }),
-        })
-        t.list.field('comments', {
-            type: 'Comment',
-            resolve: (parent, _args, context) =>
-                context.prisma.comment.findMany({
-                    where: { authorId: parent.id },
-                }),
-        })
-        t.list.field('likes', {
-            type: 'Like',
-            resolve: (parent, _args, context) =>
-                context.prisma.like.findMany({
-                    where: { userId: parent.id },
-                }),
-        })
-        t.list.field('followedBy', {
-            type: 'User',
-            resolve: (parent, _args, context) =>
-                context.prisma.user.findMany({
-                    where: { followingIDs: { has: parent.id } },
-                }),
-        })
-        t.list.field('following', {
-            type: 'User',
-            resolve: (parent, _args, context) =>
-                context.prisma.user.findMany({
-                    where: { followedByIDs: { has: parent.id } },
-                }),
-        })
-        t.string('createdAt')
+        t.field(np.User.avatar)
+        t.list.field(np.User.comments)
+        t.list.field(np.User.posts)
+        t.list.field(np.User.comments)
+        t.list.field(np.User.likes)
+        t.list.field(np.User.followedBy)
+        t.list.field(np.User.following)
+        t.field(np.User.createdAt)
     },
 })
 
