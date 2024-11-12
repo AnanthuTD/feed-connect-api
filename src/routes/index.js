@@ -1,11 +1,13 @@
 import express from 'express'
 import userRouter from './userRouter.js'
 import authRouter from './authRoutes.js'
-import { authenticate } from '../middleware/authentication.js'
+import AuthMiddleware from '../middleware/authentication.js'
 
 const router = express.Router()
 
-router.use('/user', authenticate, userRouter)
+const authMiddleware = new AuthMiddleware()
+
+router.use('/user', authMiddleware.authenticate, userRouter)
 router.use('/auth', authRouter)
 
 export default router
