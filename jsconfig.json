@@ -4,7 +4,7 @@
         "allowJs": true,
         "baseUrl": ".",
         "paths": {
-            "*": ["./node_modules/*", "./src/graphql/generated/nexusTypes.d.ts"]
+            "*": ["./node_modules/*"]
         }
     },
     "include": ["src/**/*.js", "./src/graphql/generated/nexusTypes.d.ts"]
