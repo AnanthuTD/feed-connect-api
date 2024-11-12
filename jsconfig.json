@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "allowJs": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": ["./node_modules/*", "./src/graphql/generated/nexusTypes.d.ts"]
+        }
+    },
+    "include": ["src/**/*.js", "./src/graphql/generated/nexusTypes.d.ts"]
+}
