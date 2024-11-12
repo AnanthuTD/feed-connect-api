@@ -1,5 +1,6 @@
-import { extendType, idArg, objectType } from 'nexus'
+import { extendType, objectType } from 'nexus'
 import np from 'nexus-prisma'
+import { ensureAuthenticated } from '../ensureAuthenticated.js'
 
 const User = objectType({
     name: np.User.$name,
@@ -11,7 +12,6 @@ const User = objectType({
         t.field(np.User.avatar)
         t.list.field(np.User.comments)
         t.list.field(np.User.posts)
-        t.list.field(np.User.comments)
         t.list.field(np.User.likes)
         t.list.field(np.User.followedBy)
         t.list.field(np.User.following)
@@ -24,11 +24,19 @@ const UserQueries = extendType({
     definition(t) {
         t.field('user', {
             type: 'User',
-            args: { id: idArg({ description: 'id of user' }) },
-            resolve: async (_parent, args, context) =>
-                context.prisma.user.findUnique({
-                    where: { id: args.id },
-                }),
+            resolve: async (_parent, _args, context) => {
+                ensureAuthenticated(context)
+
+                const user = await context.prisma.user.findUnique({
+                    where: { id: context.user.id },
+                })
+
+                if (!user) {
+                    throw new Error('User not found')
+                }
+
+                return user
+            },
         })
     },
 })

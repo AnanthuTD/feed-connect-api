@@ -55,10 +55,7 @@ type Query {
     """id of like"""
     id: String
   ): Like
-  user(
-    """id of user"""
-    id: ID
-  ): User
+  user: User
 }
 
 type User {

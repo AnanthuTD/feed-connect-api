@@ -207,9 +207,6 @@ export interface NexusGenArgTypes {
     like: { // args
       id?: string | null; // String
     }
-    user: { // args
-      id?: string | null; // ID
-    }
   }
 }
 
