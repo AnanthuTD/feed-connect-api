@@ -40,9 +40,11 @@ model RefreshToken {
 }
 
 model Post {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  content   String
-  imageUrl  String?
+   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  file      String   // URL of the file in S3
+  caption   String?
+  location  String?
+  private   Boolean  @default(false)
   author    User      @relation(fields: [authorId], references: [id])
   authorId  String    @db.ObjectId
   comments  Comment[]
@@ -50,6 +52,7 @@ model Post {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
+
 
 model Comment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
