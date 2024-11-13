@@ -1,6 +1,6 @@
 import { env } from '../env/env.js'
 import { s3Client } from './s3Client.js'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
 
 export async function uploadFileToS3(file) {
     const { createReadStream, filename, mimetype } = await file
@@ -15,6 +15,16 @@ export async function uploadFileToS3(file) {
         ACL: 'public-read',
     }
 
-    await s3Client.send(new PutObjectCommand(uploadParams))
-    return `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${uniqueFileName}`
+    const upload = new Upload({
+        client: s3Client,
+        params: uploadParams,
+    })
+
+    try {
+        await upload.done()
+        return `https://${env.S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${uniqueFileName}`
+    } catch (error) {
+        console.error('Failed to upload file:', error)
+        throw error
+    }
 }
