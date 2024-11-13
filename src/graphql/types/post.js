@@ -1,6 +1,7 @@
 import { objectType, extendType, nonNull, stringArg, booleanArg } from 'nexus'
 import np from 'nexus-prisma'
 import { uploadFileToS3 } from '../../services/s3Service.js'
+import { ensureAuthenticated } from '../ensureAuthenticated.js'
 
 const Post = objectType({
     name: 'Post',
@@ -30,6 +31,8 @@ const PostMutation = extendType({
                 isPrivate: booleanArg(),
             },
             async resolve(_, { file, caption, location, isPrivate }, ctx) {
+                ensureAuthenticated(ctx)
+
                 const fileUrl = await uploadFileToS3(file)
                 const userId = ctx.user.id
 
