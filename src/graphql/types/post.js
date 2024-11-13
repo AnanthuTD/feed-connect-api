@@ -24,7 +24,7 @@ const PostMutation = extendType({
         t.field('createPost', {
             type: 'Post',
             args: {
-                file: nonNull('Upload'), // Upload scalar for handling file uploads
+                file: nonNull('Upload'),
                 caption: stringArg(),
                 location: stringArg(),
                 isPrivate: booleanArg(),

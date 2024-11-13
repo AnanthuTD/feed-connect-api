@@ -79,6 +79,7 @@ export interface NexusGenScalars {
   DateTime: any
   Decimal: any
   Json: any
+  Upload: any
 }
 
 export interface NexusGenObjects {
@@ -91,6 +92,7 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
   }
+  Mutation: {};
   Post: { // root type
     caption?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -134,6 +136,9 @@ export interface NexusGenFieldTypes {
     id: string | null; // ID
     post: NexusGenRootTypes['Post']; // Post!
     user: NexusGenRootTypes['User']; // User!
+  }
+  Mutation: { // field return type
+    createPost: NexusGenRootTypes['Post'] | null; // Post
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -180,6 +185,9 @@ export interface NexusGenFieldTypeNames {
     post: 'Post'
     user: 'User'
   }
+  Mutation: { // field return type name
+    createPost: 'Post'
+  }
   Post: { // field return type name
     author: 'User'
     caption: 'String'
@@ -212,6 +220,14 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createPost: { // args
+      caption?: string | null; // String
+      file: NexusGenScalars['Upload']; // Upload!
+      isPrivate?: boolean | null; // Boolean
+      location?: string | null; // String
+    }
+  }
   Query: {
     like: { // args
       id?: string | null; // String
