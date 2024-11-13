@@ -5,7 +5,7 @@ class AuthMiddleware {
         this.jwtService = jwtService
     }
 
-    authenticate(req, res, next) {
+    authenticate = (req, res, next) => {
         const token = req.headers.authorization?.split(' ')[1]
 
         if (!token) {
@@ -32,7 +32,7 @@ class AuthMiddleware {
         }
     }
 
-    _handleUnauthorized(req, res, message) {
+    _handleUnauthorized = (req, res, message) => {
         if (res) {
             // REST API response
             return res.status(401).json({
