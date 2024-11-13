@@ -41,12 +41,14 @@ type Like {
 
 type Post {
   author: User!
+  caption: String
   comments: [[Comment!]!]
-  content: String
   createdAt: DateTime!
-  id: ID
-  imageUrl: String!
+  file: String!
+  id: ID!
+  isPrivate: Boolean!
   likes: [[Like!]!]
+  location: String
   updatedAt: DateTime!
 }
 

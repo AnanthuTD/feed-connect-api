@@ -1,7 +1,7 @@
 import multer from 'multer'
 import multerS3 from 'multer-s3'
-import env from '../../infrastructure/env/env'
-import { s3Client } from '../services/s3Client'
+import { s3Client } from '../services/s3Client.js'
+import { env } from '../env/env.js'
 
 export const upload = multer({
     storage: multerS3({

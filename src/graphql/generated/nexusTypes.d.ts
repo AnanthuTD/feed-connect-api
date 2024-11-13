@@ -92,10 +92,12 @@ export interface NexusGenObjects {
     id?: string | null; // ID
   }
   Post: { // root type
-    content?: string | null; // String
+    caption?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    id?: string | null; // ID
-    imageUrl: string; // String!
+    file: string; // String!
+    id: string; // ID!
+    isPrivate: boolean; // Boolean!
+    location?: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Query: {};
@@ -134,12 +136,14 @@ export interface NexusGenFieldTypes {
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
+    caption: string | null; // String
     comments: NexusGenRootTypes['Comment'][][] | null; // [[Comment!]!]
-    content: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    id: string | null; // ID
-    imageUrl: string; // String!
+    file: string; // String!
+    id: string; // ID!
+    isPrivate: boolean; // Boolean!
     likes: NexusGenRootTypes['Like'][][] | null; // [[Like!]!]
+    location: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Query: { // field return type
@@ -176,12 +180,14 @@ export interface NexusGenFieldTypeNames {
   }
   Post: { // field return type name
     author: 'User'
+    caption: 'String'
     comments: 'Comment'
-    content: 'String'
     createdAt: 'DateTime'
+    file: 'String'
     id: 'ID'
-    imageUrl: 'String'
+    isPrivate: 'Boolean'
     likes: 'Like'
+    location: 'String'
     updatedAt: 'DateTime'
   }
   Query: { // field return type name

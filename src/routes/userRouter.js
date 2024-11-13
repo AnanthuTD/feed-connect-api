@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { post } from '../controllers/postController.js'
-import { upload } from '../middleware/multerS3Config'
+import { upload } from '../middleware/multerS3Config.js'
 import { ProfileController } from '../controllers/profileController.js'
 
 const userRouter = Router()

@@ -1,4 +1,4 @@
-import { uploadFileToS3 } from '../services/s3Service'
+import { uploadFileToS3 } from '../services/s3Service.js'
 
 // src/controllers/userController.js
 export async function post(req, res) {
