@@ -20,7 +20,7 @@ class AuthMiddleware {
                 return next()
             } else {
                 // For GraphQL, return user context
-                return { user: req.user }
+                return req.user
             }
         } catch (error) {
             console.error('Authentication failed!', error)
