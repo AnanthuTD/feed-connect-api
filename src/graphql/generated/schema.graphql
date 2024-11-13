@@ -67,8 +67,9 @@ type User {
   email: String
   followedBy: [[User!]!]
   following: [[User!]!]
+  fullName: String!
   id: ID!
   likes: [[Like!]!]
   posts: [[Post!]!]
-  username: String
+  username: String!
 }

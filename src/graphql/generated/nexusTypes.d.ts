@@ -105,8 +105,9 @@ export interface NexusGenObjects {
     avatar?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email?: string | null; // String
+    fullName: string; // String!
     id: string; // ID!
-    username?: string | null; // String
+    username: string; // String!
   }
 }
 
@@ -157,10 +158,11 @@ export interface NexusGenFieldTypes {
     email: string | null; // String
     followedBy: NexusGenRootTypes['User'][][] | null; // [[User!]!]
     following: NexusGenRootTypes['User'][][] | null; // [[User!]!]
+    fullName: string; // String!
     id: string; // ID!
     likes: NexusGenRootTypes['Like'][][] | null; // [[Like!]!]
     posts: NexusGenRootTypes['Post'][][] | null; // [[Post!]!]
-    username: string | null; // String
+    username: string; // String!
   }
 }
 
@@ -201,6 +203,7 @@ export interface NexusGenFieldTypeNames {
     email: 'String'
     followedBy: 'User'
     following: 'User'
+    fullName: 'String'
     id: 'ID'
     likes: 'Like'
     posts: 'Post'

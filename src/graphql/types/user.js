@@ -7,8 +7,9 @@ const User = objectType({
     description: np.User.$description,
     definition(t) {
         t.field(np.User.id)
-        t.string('username')
-        t.string('email')
+        t.field(np.User.username)
+        t.field(np.User.fullName)
+        t.field(np.User.email)
         t.field(np.User.avatar)
         t.list.field(np.User.comments)
         t.list.field(np.User.posts)
@@ -27,7 +28,7 @@ const UserQueries = extendType({
             resolve: async (_parent, _args, context) => {
                 ensureAuthenticated(context)
 
-                const user = await context.prisma.user.findUnique({
+                const user = await context.prisma.user.findFirst({
                     where: { id: context.user.id },
                 })
 
