@@ -40,11 +40,11 @@ model RefreshToken {
 }
 
 model Post {
-   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   file      String   // URL of the file in S3
   caption   String?
   location  String?
-  private   Boolean  @default(false)
+  isPrivate   Boolean  @default(false)
   author    User      @relation(fields: [authorId], references: [id])
   authorId  String    @db.ObjectId
   comments  Comment[]

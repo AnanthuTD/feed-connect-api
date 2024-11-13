@@ -1,13 +1,11 @@
 import { objectType, extendType, nonNull, stringArg, booleanArg } from 'nexus'
 import np from 'nexus-prisma'
-import { uploadFileToS3 } from '../services/s3Service.js'
+import { uploadFileToS3 } from '../../services/s3Service.js'
 
 const Post = objectType({
     name: 'Post',
     definition(t) {
-        t.id('id')
-        t.string('content')
-        t.nonNull.string('imageUrl')
+        t.field(np.Post.id)
         t.field(np.Post.author)
         t.list.field(np.Post.comments)
         t.list.field(np.Post.likes)
