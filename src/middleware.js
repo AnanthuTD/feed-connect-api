@@ -2,6 +2,7 @@ import { urlencoded, static as expressStatic, json } from 'express'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import chalk from 'chalk'
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs'
 
 export function setupMiddleware(app) {
     // Colorful logging with morgan and chalk
@@ -20,4 +21,6 @@ export function setupMiddleware(app) {
     app.use(expressStatic('public'))
     app.use(cookieParser())
     app.use(json())
+    // to upload multipart data using graphql
+    app.use(graphqlUploadExpress())
 }
