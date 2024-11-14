@@ -103,6 +103,14 @@ export interface NexusGenObjects {
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Query: {};
+  Story: { // root type
+    caption: string; // String!
+    fileUrl: string; // String!
+    hashTag: string[]; // [String!]!
+    id: string; // ID!
+    location: string; // String!
+    mentions: string[]; // [String!]!
+  }
   User: { // root type
     avatar?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -139,6 +147,7 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     createPost: NexusGenRootTypes['Post'] | null; // Post
+    createStory: NexusGenRootTypes['Story'] | null; // Story
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -155,6 +164,15 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     like: NexusGenRootTypes['Like'] | null; // Like
     user: NexusGenRootTypes['User'] | null; // User
+  }
+  Story: { // field return type
+    author: NexusGenRootTypes['User']; // User!
+    caption: string; // String!
+    fileUrl: string; // String!
+    hashTag: string[]; // [String!]!
+    id: string; // ID!
+    location: string; // String!
+    mentions: string[]; // [String!]!
   }
   User: { // field return type
     avatar: string | null; // String
@@ -187,6 +205,7 @@ export interface NexusGenFieldTypeNames {
   }
   Mutation: { // field return type name
     createPost: 'Post'
+    createStory: 'Story'
   }
   Post: { // field return type name
     author: 'User'
@@ -203,6 +222,15 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     like: 'Like'
     user: 'User'
+  }
+  Story: { // field return type name
+    author: 'User'
+    caption: 'String'
+    fileUrl: 'String'
+    hashTag: 'String'
+    id: 'ID'
+    location: 'String'
+    mentions: 'String'
   }
   User: { // field return type name
     avatar: 'String'
@@ -226,6 +254,13 @@ export interface NexusGenArgTypes {
       file: NexusGenScalars['Upload']; // Upload!
       isPrivate?: boolean | null; // Boolean
       location?: string | null; // String
+    }
+    createStory: { // args
+      caption?: string | null; // String
+      file: NexusGenScalars['Upload']; // Upload!
+      hashTag?: Array<string | null> | null; // [String]
+      location?: string | null; // String
+      mentions?: Array<string | null> | null; // [String]
     }
   }
   Query: {

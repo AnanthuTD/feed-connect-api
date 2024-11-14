@@ -4,6 +4,7 @@ import { Like, LikeQueries } from './like.js'
 import { Post, PostMutation } from './post.js'
 import { User, UserQueries } from './user.js'
 import NexusPrismaScalars from 'nexus-prisma/scalars'
+import { Story, StoryMutation } from './story.js'
 
 export default [
     NexusPrismaScalars,
@@ -15,4 +16,6 @@ export default [
     Comment,
     Like,
     LikeQueries,
+    Story,
+    StoryMutation,
 ]
