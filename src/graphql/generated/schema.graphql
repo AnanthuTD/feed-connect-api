@@ -57,7 +57,15 @@ type Post {
   updatedAt: DateTime!
 }
 
+type PostConnection {
+  hasMore: Boolean
+  posts: [Post]
+  totalCount: Int
+}
+
 type Query {
+  getPosts(skip: Int, take: Int): PostConnection
+  getStories(skip: Int, take: Int): StoryConnection
   like(
     """id of like"""
     id: String
@@ -73,6 +81,12 @@ type Story {
   id: ID!
   location: String!
   mentions: [String!]!
+}
+
+type StoryConnection {
+  hasMore: Boolean
+  stories: [Story]
+  totalCount: Int
 }
 
 """The `Upload` scalar type represents a file upload."""
