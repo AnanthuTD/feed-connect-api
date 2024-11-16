@@ -1,4 +1,4 @@
-import { objectType, extendType, nonNull, stringArg, list } from 'nexus'
+import { objectType, extendType, nonNull, stringArg, list, intArg } from 'nexus'
 import np from 'nexus-prisma'
 import { ensureAuthenticated } from '../ensureAuthenticated.js'
 import { uploadFileToS3 } from '../../services/s3Service.js'
@@ -51,5 +51,49 @@ export const StoryMutation = extendType({
                 })
             },
         })
+    },
+})
+
+export const StoryQuery = extendType({
+    type: 'Query',
+    definition(t) {
+        t.field('getStories', {
+            type: 'StoryConnection',
+            args: {
+                take: intArg(), // Number of stories to fetch
+                skip: intArg(), // Number of stories to skip
+            },
+            async resolve(_, { take = 10, skip = 0 }, ctx) {
+                ensureAuthenticated(ctx)
+
+                const stories = await ctx.prisma.story.findMany({
+                    skip,
+                    take,
+                    orderBy: {
+                        createdAt: 'desc', // Newest stories first
+                    },
+                    include: {
+                        author: true,
+                    },
+                })
+
+                const totalCount = await ctx.prisma.story.count()
+
+                return {
+                    stories,
+                    totalCount,
+                    hasMore: skip + take < totalCount,
+                }
+            },
+        })
+    },
+})
+
+export const StoryConnection = objectType({
+    name: 'StoryConnection',
+    definition(t) {
+        t.list.field('stories', { type: 'Story' }) // The stories
+        t.int('totalCount') // Total number of stories
+        t.boolean('hasMore') // Whether more stories are available
     },
 })
