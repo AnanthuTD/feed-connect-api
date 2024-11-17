@@ -2,10 +2,11 @@ import { startServer } from './server.js'
 
 const PORT = process.env.PORT || 3000
 
-startServer(PORT)
-    .then(() => {
-        console.log(`Server running on port: ${PORT}`)
-    })
-    .catch((error) => {
+;(async () => {
+    try {
+        await startServer(PORT)
+    } catch (error) {
         console.error('Failed to start server:', error)
-    })
+        process.exit(1) // Exit the process with an error code
+    }
+})()

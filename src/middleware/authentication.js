@@ -9,7 +9,7 @@ class AuthMiddleware {
         const token = req.headers.authorization?.split(' ')[1]
 
         if (!token) {
-            return this._handleUnauthorized(req, res, 'No token provided.')
+            return this._handleUnauthorized(res, 'No token provided.')
         }
 
         try {
@@ -24,15 +24,25 @@ class AuthMiddleware {
             }
         } catch (error) {
             console.error('Authentication failed!', error)
-            return this._handleUnauthorized(
-                req,
-                res,
-                'Invalid or expired token.'
-            )
+            return this._handleUnauthorized(res, 'Invalid or expired token.')
         }
     }
 
-    _handleUnauthorized = (req, res, message) => {
+    verifyToken = (token) => {
+        if (!token) {
+            return this._handleUnauthorized(null, 'No token provided.')
+        }
+
+        try {
+            const decodedToken = this.jwtService.verifyAccessToken(token)
+            return { id: decodedToken.id }
+        } catch (error) {
+            console.error('Authentication failed!', error)
+            return this._handleUnauthorized(null, 'Invalid or expired token.')
+        }
+    }
+
+    _handleUnauthorized = (res, message) => {
         if (res) {
             // REST API response
             return res.status(401).json({
