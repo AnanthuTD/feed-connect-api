@@ -12,23 +12,25 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
-  fullName      String
-  username      String         @unique
-  avatar        String?
-  email         String?        @unique
-  phone         String?        @unique
-  password      String
-  posts         Post[]
-  comments      Comment[]
-  likes         Like[]
-  followedBy    User[]         @relation("UserFollows", fields: [followedByIDs], references: [id])
-  followedByIDs String[]       @db.ObjectId
-  following     User[]         @relation("UserFollows", fields: [followingIDs], references: [id])
-  followingIDs  String[]       @db.ObjectId
-  createdAt     DateTime       @default(now())
-  refreshTokens RefreshToken[] @relation("UserRefreshTokens")
-  Story         Story[]
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  fullName        String
+  username        String         @unique
+  avatar          String?
+  email           String?        @unique
+  phone           String?        @unique
+  password        String
+  posts           Post[]
+  comments        Comment[]
+  likes           Like[]
+  followedBy      User[]         @relation("UserFollows", fields: [followedByIDs], references: [id])
+  followedByIDs   String[]       @db.ObjectId
+  following       User[]         @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs    String[]       @db.ObjectId
+  createdAt       DateTime       @default(now())
+  refreshTokens   RefreshToken[] @relation("UserRefreshTokens")
+  story           Story[]
+  conversationIds String[]       @db.ObjectId
+  conversations   Conversation[] @relation(fields: [conversationIds], references: [id])
 }
 
 model RefreshToken {
@@ -84,4 +86,32 @@ model Like {
   post      Post     @relation(fields: [postId], references: [id])
   postId    String   @db.ObjectId
   createdAt DateTime @default(now())
+}
+
+model Conversation {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  participantsId String[]  @db.ObjectId
+  participants   User[]    @relation(fields: [participantsId], references: [id])
+  lastMessageId  String?   @unique @db.ObjectId
+  lastMessage    Message?  @relation(fields: [lastMessageId], references: [id], name: "lastMessage", onDelete: NoAction, onUpdate: NoAction)
+  messages       Message[] @relation(name: "conversation")
+  lastActivityAt DateTime  @default(now())
+
+  @@index([participantsId], map: "idx_participants")
+}
+
+model Message {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String        @db.ObjectId
+  senderId       String        @db.ObjectId
+  content        String
+  readBy         String[]      @db.ObjectId
+  createdAt      DateTime      @default(now())
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], name: "conversation", onDelete: NoAction, onUpdate: NoAction)
+  lastMessage    Conversation? @relation(name: "lastMessage")
+
+  @@index([conversationId], map: "idx_conversation")
+  @@index([senderId], map: "idx_sender")
+  @@index([createdAt], map: "idx_createdAt")
+  @@index([readBy], map: "idx_readBy")
 }
