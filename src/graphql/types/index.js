@@ -1,5 +1,5 @@
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs'
-import { Comment } from './comment.js'
+import { Comment, CommentMutations } from './comment.js'
 import { Like, LikeQueries, LikeMutations } from './like.js'
 import { Post, PostConnection, PostMutation, PostQuery } from './post.js'
 import { User, UserQueries } from './user.js'
@@ -23,4 +23,5 @@ export default [
     StoryMutation,
     StoryQuery,
     StoryConnection,
+    CommentMutations,
 ]
