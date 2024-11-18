@@ -102,6 +102,11 @@ export interface NexusGenObjects {
     location?: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
+  PostConnection: { // root type
+    hasMore?: boolean | null; // Boolean
+    posts?: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    totalCount?: number | null; // Int
+  }
   Query: {};
   Story: { // root type
     caption: string; // String!
@@ -110,6 +115,11 @@ export interface NexusGenObjects {
     id: string; // ID!
     location: string; // String!
     mentions: string[]; // [String!]!
+  }
+  StoryConnection: { // root type
+    hasMore?: boolean | null; // Boolean
+    stories?: Array<NexusGenRootTypes['Story'] | null> | null; // [Story]
+    totalCount?: number | null; // Int
   }
   User: { // root type
     avatar?: string | null; // String
@@ -161,7 +171,14 @@ export interface NexusGenFieldTypes {
     location: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
+  PostConnection: { // field return type
+    hasMore: boolean | null; // Boolean
+    posts: Array<NexusGenRootTypes['Post'] | null> | null; // [Post]
+    totalCount: number | null; // Int
+  }
   Query: { // field return type
+    getPosts: NexusGenRootTypes['PostConnection'] | null; // PostConnection
+    getStories: NexusGenRootTypes['StoryConnection'] | null; // StoryConnection
     like: NexusGenRootTypes['Like'] | null; // Like
     user: NexusGenRootTypes['User'] | null; // User
   }
@@ -173,6 +190,11 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     location: string; // String!
     mentions: string[]; // [String!]!
+  }
+  StoryConnection: { // field return type
+    hasMore: boolean | null; // Boolean
+    stories: Array<NexusGenRootTypes['Story'] | null> | null; // [Story]
+    totalCount: number | null; // Int
   }
   User: { // field return type
     avatar: string | null; // String
@@ -219,7 +241,14 @@ export interface NexusGenFieldTypeNames {
     location: 'String'
     updatedAt: 'DateTime'
   }
+  PostConnection: { // field return type name
+    hasMore: 'Boolean'
+    posts: 'Post'
+    totalCount: 'Int'
+  }
   Query: { // field return type name
+    getPosts: 'PostConnection'
+    getStories: 'StoryConnection'
     like: 'Like'
     user: 'User'
   }
@@ -231,6 +260,11 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     location: 'String'
     mentions: 'String'
+  }
+  StoryConnection: { // field return type name
+    hasMore: 'Boolean'
+    stories: 'Story'
+    totalCount: 'Int'
   }
   User: { // field return type name
     avatar: 'String'
@@ -264,6 +298,14 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    getPosts: { // args
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
+    getStories: { // args
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
     like: { // args
       id?: string | null; // String
     }
