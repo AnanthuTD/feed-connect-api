@@ -12,6 +12,7 @@ export function ensureAuthenticated(context) {
     }
 
     if (!context.user) {
+        console.log('User not authentication! ( from: ensureAuthenticated )')
         throw new GraphQLError('User is not authenticated', {
             extensions: {
                 code: 'UNAUTHENTICATED',
