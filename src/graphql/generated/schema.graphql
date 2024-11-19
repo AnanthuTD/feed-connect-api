@@ -19,6 +19,15 @@ type Comment {
   post: Post!
 }
 
+type Conversation {
+  id: ID!
+  lastActivityAt: DateTime!
+  lastMessage: Message
+  messages: [Message!]!
+  participants: [User!]!
+  participantsId: [String!]!
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -39,9 +48,26 @@ type Like {
   user: User!
 }
 
+type Message {
+  content: String!
+  conversation: Conversation!
+  conversationId: String!
+  createdAt: DateTime!
+  id: ID!
+  lastMessage: Conversation
+  readBy: [String!]!
+  senderId: String!
+}
+
+type MessageConnection {
+  hasMore: Boolean
+  messages: [Message]
+}
+
 type Mutation {
   createPost(caption: String, file: Upload!, isPrivate: Boolean, location: String): Post
   createStory(caption: String, file: Upload!, hashTag: [String], location: String, mentions: [String]): Story
+  sendMessage(content: String, receiverId: String): Message
 }
 
 type Post {
@@ -64,6 +90,8 @@ type PostConnection {
 }
 
 type Query {
+  conversations: [Conversation]
+  getMessages(receiverId: String, skip: Int, take: Int): MessageConnection
   getPosts(skip: Int, take: Int): PostConnection
   getStories(skip: Int, take: Int): StoryConnection
   like(
@@ -87,6 +115,10 @@ type StoryConnection {
   hasMore: Boolean
   stories: [Story]
   totalCount: Int
+}
+
+type Subscription {
+  MessageSubscription: Message
 }
 
 """The `Upload` scalar type represents a file upload."""

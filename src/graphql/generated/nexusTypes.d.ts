@@ -88,9 +88,26 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
   }
+  Conversation: { // root type
+    id: string; // ID!
+    lastActivityAt: NexusGenScalars['DateTime']; // DateTime!
+    participantsId: string[]; // [String!]!
+  }
   Like: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id?: string | null; // ID
+  }
+  Message: { // root type
+    content: string; // String!
+    conversationId: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // ID!
+    readBy: string[]; // [String!]!
+    senderId: string; // String!
+  }
+  MessageConnection: { // root type
+    hasMore?: boolean | null; // Boolean
+    messages?: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
   }
   Mutation: {};
   Post: { // root type
@@ -121,6 +138,7 @@ export interface NexusGenObjects {
     stories?: Array<NexusGenRootTypes['Story'] | null> | null; // [Story]
     totalCount?: number | null; // Int
   }
+  Subscription: {};
   User: { // root type
     avatar?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -149,15 +167,38 @@ export interface NexusGenFieldTypes {
     id: string | null; // ID
     post: NexusGenRootTypes['Post']; // Post!
   }
+  Conversation: { // field return type
+    id: string; // ID!
+    lastActivityAt: NexusGenScalars['DateTime']; // DateTime!
+    lastMessage: NexusGenRootTypes['Message'] | null; // Message
+    messages: NexusGenRootTypes['Message'][]; // [Message!]!
+    participants: NexusGenRootTypes['User'][]; // [User!]!
+    participantsId: string[]; // [String!]!
+  }
   Like: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     id: string | null; // ID
     post: NexusGenRootTypes['Post']; // Post!
     user: NexusGenRootTypes['User']; // User!
   }
+  Message: { // field return type
+    content: string; // String!
+    conversation: NexusGenRootTypes['Conversation']; // Conversation!
+    conversationId: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // ID!
+    lastMessage: NexusGenRootTypes['Conversation'] | null; // Conversation
+    readBy: string[]; // [String!]!
+    senderId: string; // String!
+  }
+  MessageConnection: { // field return type
+    hasMore: boolean | null; // Boolean
+    messages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
+  }
   Mutation: { // field return type
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createStory: NexusGenRootTypes['Story'] | null; // Story
+    sendMessage: NexusGenRootTypes['Message'] | null; // Message
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -177,6 +218,8 @@ export interface NexusGenFieldTypes {
     totalCount: number | null; // Int
   }
   Query: { // field return type
+    conversations: Array<NexusGenRootTypes['Conversation'] | null> | null; // [Conversation]
+    getMessages: NexusGenRootTypes['MessageConnection'] | null; // MessageConnection
     getPosts: NexusGenRootTypes['PostConnection'] | null; // PostConnection
     getStories: NexusGenRootTypes['StoryConnection'] | null; // StoryConnection
     like: NexusGenRootTypes['Like'] | null; // Like
@@ -195,6 +238,9 @@ export interface NexusGenFieldTypes {
     hasMore: boolean | null; // Boolean
     stories: Array<NexusGenRootTypes['Story'] | null> | null; // [Story]
     totalCount: number | null; // Int
+  }
+  Subscription: { // field return type
+    MessageSubscription: NexusGenRootTypes['Message'] | null; // Message
   }
   User: { // field return type
     avatar: string | null; // String
@@ -219,15 +265,38 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     post: 'Post'
   }
+  Conversation: { // field return type name
+    id: 'ID'
+    lastActivityAt: 'DateTime'
+    lastMessage: 'Message'
+    messages: 'Message'
+    participants: 'User'
+    participantsId: 'String'
+  }
   Like: { // field return type name
     createdAt: 'DateTime'
     id: 'ID'
     post: 'Post'
     user: 'User'
   }
+  Message: { // field return type name
+    content: 'String'
+    conversation: 'Conversation'
+    conversationId: 'String'
+    createdAt: 'DateTime'
+    id: 'ID'
+    lastMessage: 'Conversation'
+    readBy: 'String'
+    senderId: 'String'
+  }
+  MessageConnection: { // field return type name
+    hasMore: 'Boolean'
+    messages: 'Message'
+  }
   Mutation: { // field return type name
     createPost: 'Post'
     createStory: 'Story'
+    sendMessage: 'Message'
   }
   Post: { // field return type name
     author: 'User'
@@ -247,6 +316,8 @@ export interface NexusGenFieldTypeNames {
     totalCount: 'Int'
   }
   Query: { // field return type name
+    conversations: 'Conversation'
+    getMessages: 'MessageConnection'
     getPosts: 'PostConnection'
     getStories: 'StoryConnection'
     like: 'Like'
@@ -265,6 +336,9 @@ export interface NexusGenFieldTypeNames {
     hasMore: 'Boolean'
     stories: 'Story'
     totalCount: 'Int'
+  }
+  Subscription: { // field return type name
+    MessageSubscription: 'Message'
   }
   User: { // field return type name
     avatar: 'String'
@@ -296,8 +370,17 @@ export interface NexusGenArgTypes {
       location?: string | null; // String
       mentions?: Array<string | null> | null; // [String]
     }
+    sendMessage: { // args
+      content?: string | null; // String
+      receiverId?: string | null; // String
+    }
   }
   Query: {
+    getMessages: { // args
+      receiverId?: string | null; // String
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
     getPosts: { // args
       skip?: number | null; // Int
       take?: number | null; // Int
