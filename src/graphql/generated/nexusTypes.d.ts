@@ -196,9 +196,13 @@ export interface NexusGenFieldTypes {
     messages: Array<NexusGenRootTypes['Message'] | null> | null; // [Message]
   }
   Mutation: { // field return type
+    addComment: NexusGenRootTypes['Comment'] | null; // Comment
     createPost: NexusGenRootTypes['Post'] | null; // Post
     createStory: NexusGenRootTypes['Story'] | null; // Story
+    deleteComment: boolean | null; // Boolean
+    editComment: NexusGenRootTypes['Comment'] | null; // Comment
     sendMessage: NexusGenRootTypes['Message'] | null; // Message
+    toggleLike: boolean | null; // Boolean
   }
   Post: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -294,9 +298,13 @@ export interface NexusGenFieldTypeNames {
     messages: 'Message'
   }
   Mutation: { // field return type name
+    addComment: 'Comment'
     createPost: 'Post'
     createStory: 'Story'
+    deleteComment: 'Boolean'
+    editComment: 'Comment'
     sendMessage: 'Message'
+    toggleLike: 'Boolean'
   }
   Post: { // field return type name
     author: 'User'
@@ -357,6 +365,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    addComment: { // args
+      content: string; // String!
+      postId: string; // String!
+    }
     createPost: { // args
       caption?: string | null; // String
       file: NexusGenScalars['Upload']; // Upload!
@@ -370,9 +382,19 @@ export interface NexusGenArgTypes {
       location?: string | null; // String
       mentions?: Array<string | null> | null; // [String]
     }
+    deleteComment: { // args
+      commentId: string; // String!
+    }
+    editComment: { // args
+      commentId: string; // String!
+      content: string; // String!
+    }
     sendMessage: { // args
       content?: string | null; // String
       receiverId?: string | null; // String
+    }
+    toggleLike: { // args
+      postId: string; // String!
     }
   }
   Query: {

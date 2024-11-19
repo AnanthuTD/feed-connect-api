@@ -65,9 +65,13 @@ type MessageConnection {
 }
 
 type Mutation {
+  addComment(content: String!, postId: String!): Comment
   createPost(caption: String, file: Upload!, isPrivate: Boolean, location: String): Post
   createStory(caption: String, file: Upload!, hashTag: [String], location: String, mentions: [String]): Story
+  deleteComment(commentId: String!): Boolean
+  editComment(commentId: String!, content: String!): Comment
   sendMessage(content: String, receiverId: String): Message
+  toggleLike(postId: String!): Boolean
 }
 
 type Post {

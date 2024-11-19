@@ -1,5 +1,6 @@
-import { extendType, objectType, stringArg } from 'nexus'
+import { extendType, objectType, stringArg, nonNull } from 'nexus'
 import np from 'nexus-prisma'
+import { ensureAuthenticated } from '../ensureAuthenticated.js'
 
 const Like = objectType({
     name: 'Like',
@@ -25,4 +26,46 @@ const LikeQueries = extendType({
     },
 })
 
-export { Like, LikeQueries }
+const LikeMutations = extendType({
+    type: 'Mutation',
+    definition(t) {
+        t.field('toggleLike', {
+            type: 'Boolean',
+            args: {
+                postId: nonNull(stringArg()),
+            },
+            async resolve(_parent, { postId }, ctx) {
+                ensureAuthenticated(ctx)
+
+                const userId = ctx.user.id
+
+                // Check if the like already exists
+                const existingLike = await ctx.prisma.like.findFirst({
+                    where: {
+                        postId,
+                        userId,
+                    },
+                })
+
+                if (existingLike) {
+                    // Remove the like
+                    await ctx.prisma.like.delete({
+                        where: { id: existingLike.id },
+                    })
+                    return false // Indicates the post is no longer liked
+                } else {
+                    // Add a new like
+                    await ctx.prisma.like.create({
+                        data: {
+                            postId,
+                            userId,
+                        },
+                    })
+                    return true // Indicates the post is now liked
+                }
+            },
+        })
+    },
+})
+
+export { Like, LikeQueries, LikeMutations }

@@ -1,6 +1,6 @@
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs'
-import { Comment } from './comment.js'
-import { Like, LikeQueries } from './like.js'
+import { Comment, CommentMutations } from './comment.js'
+import { Like, LikeQueries, LikeMutations } from './like.js'
 import { Post, PostConnection, PostMutation, PostQuery } from './post.js'
 import { User, UserQueries } from './user.js'
 import NexusPrismaScalars from 'nexus-prisma/scalars'
@@ -26,6 +26,7 @@ export default [
     Comment,
     Like,
     LikeQueries,
+    LikeMutations,
     Story,
     StoryMutation,
     StoryQuery,
@@ -37,4 +38,5 @@ export default [
     ConversationQuery,
     MessageQuery,
     MessageConnection,
+    CommentMutations,
 ]
