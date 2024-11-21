@@ -16,15 +16,43 @@ const Post = objectType({
         t.field(np.Post.id)
         t.field(np.Post.author)
         t.list.field(np.Post.comments)
-        t.list.field(np.Post.likes)
+        t.field(np.Post.likes)
         t.field(np.Post.createdAt)
         t.field(np.Post.updatedAt)
         t.field(np.Post.caption)
         t.field(np.Post.location)
         t.field(np.Post.file)
         t.field(np.Post.isPrivate)
+        t.field('likeCount', {
+            type: 'Int',
+            async resolve(parent, _, { prisma }) {
+                const likesCount = await prisma.post.findUnique({
+                    where: { id: parent.id },
+                    include: {
+                        _count: {
+                            select: { likes: true },
+                        },
+                    },
+                })
+
+                return likesCount._count.likes ?? 0
+            },
+        })
+        t.field('likedByCurrentUser', {
+            type: 'Boolean',
+            async resolve(parent, _, { prisma, user }) {
+                const likedByCurrentUser = await prisma.like.findFirst({
+                    where: { postId: parent.id, userId: user.id },
+                    select: { id: true },
+                })
+
+                return !!likedByCurrentUser?.id
+            },
+        })
     },
 })
+
+// console.log(np.Post.likes.resolve.toString())
 
 const PostMutation = extendType({
     type: 'Mutation',

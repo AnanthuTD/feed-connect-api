@@ -212,7 +212,9 @@ export interface NexusGenFieldTypes {
     file: string; // String!
     id: string; // ID!
     isPrivate: boolean; // Boolean!
-    likes: NexusGenRootTypes['Like'][][] | null; // [[Like!]!]
+    likeCount: number | null; // Int
+    likedByCurrentUser: boolean | null; // Boolean
+    likes: NexusGenRootTypes['Like'][]; // [Like!]!
     location: string | null; // String
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   }
@@ -314,6 +316,8 @@ export interface NexusGenFieldTypeNames {
     file: 'String'
     id: 'ID'
     isPrivate: 'Boolean'
+    likeCount: 'Int'
+    likedByCurrentUser: 'Boolean'
     likes: 'Like'
     location: 'String'
     updatedAt: 'DateTime'

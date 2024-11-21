@@ -82,7 +82,9 @@ type Post {
   file: String!
   id: ID!
   isPrivate: Boolean!
-  likes: [[Like!]!]
+  likeCount: Int
+  likedByCurrentUser: Boolean
+  likes: [Like!]!
   location: String
   updatedAt: DateTime!
 }
