@@ -104,7 +104,9 @@ type Query {
     """id of like"""
     id: String
   ): Like
+  posts(id: ID, skip: Int, take: Int): PostConnection
   user: User
+  userProfile(username: String): User
 }
 
 type Story {
@@ -132,6 +134,7 @@ scalar Upload
 
 type User {
   avatar: String
+  bio: String
   comments: [[Comment!]!]
   createdAt: DateTime!
   email: String
@@ -140,6 +143,7 @@ type User {
   fullName: String!
   id: ID!
   likes: [[Like!]!]
-  posts: [[Post!]!]
+  postCount: Int
+  posts: [Post!]!
   username: String!
 }

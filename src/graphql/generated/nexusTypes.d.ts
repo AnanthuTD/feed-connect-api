@@ -141,6 +141,7 @@ export interface NexusGenObjects {
   Subscription: {};
   User: { // root type
     avatar?: string | null; // String
+    bio?: string | null; // String
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email?: string | null; // String
     fullName: string; // String!
@@ -229,7 +230,9 @@ export interface NexusGenFieldTypes {
     getPosts: NexusGenRootTypes['PostConnection'] | null; // PostConnection
     getStories: NexusGenRootTypes['StoryConnection'] | null; // StoryConnection
     like: NexusGenRootTypes['Like'] | null; // Like
+    posts: NexusGenRootTypes['PostConnection'] | null; // PostConnection
     user: NexusGenRootTypes['User'] | null; // User
+    userProfile: NexusGenRootTypes['User'] | null; // User
   }
   Story: { // field return type
     author: NexusGenRootTypes['User']; // User!
@@ -250,6 +253,7 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     avatar: string | null; // String
+    bio: string | null; // String
     comments: NexusGenRootTypes['Comment'][][] | null; // [[Comment!]!]
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string | null; // String
@@ -258,7 +262,8 @@ export interface NexusGenFieldTypes {
     fullName: string; // String!
     id: string; // ID!
     likes: NexusGenRootTypes['Like'][][] | null; // [[Like!]!]
-    posts: NexusGenRootTypes['Post'][][] | null; // [[Post!]!]
+    postCount: number | null; // Int
+    posts: NexusGenRootTypes['Post'][]; // [Post!]!
     username: string; // String!
   }
 }
@@ -333,7 +338,9 @@ export interface NexusGenFieldTypeNames {
     getPosts: 'PostConnection'
     getStories: 'StoryConnection'
     like: 'Like'
+    posts: 'PostConnection'
     user: 'User'
+    userProfile: 'User'
   }
   Story: { // field return type name
     author: 'User'
@@ -354,6 +361,7 @@ export interface NexusGenFieldTypeNames {
   }
   User: { // field return type name
     avatar: 'String'
+    bio: 'String'
     comments: 'Comment'
     createdAt: 'DateTime'
     email: 'String'
@@ -362,6 +370,7 @@ export interface NexusGenFieldTypeNames {
     fullName: 'String'
     id: 'ID'
     likes: 'Like'
+    postCount: 'Int'
     posts: 'Post'
     username: 'String'
   }
@@ -417,6 +426,14 @@ export interface NexusGenArgTypes {
     }
     like: { // args
       id?: string | null; // String
+    }
+    posts: { // args
+      id?: string | null; // ID
+      skip?: number | null; // Int
+      take?: number | null; // Int
+    }
+    userProfile: { // args
+      username?: string | null; // String
     }
   }
 }

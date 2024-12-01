@@ -5,6 +5,7 @@ import {
     stringArg,
     booleanArg,
     intArg,
+    idArg,
 } from 'nexus'
 import np from 'nexus-prisma'
 import { uploadFileToS3 } from '../../services/s3Service.js'
@@ -116,6 +117,38 @@ const PostQuery = extendType({
                 const totalCount = await ctx.prisma.post.count({
                     where: { isPrivate: false },
                 })
+
+                return {
+                    posts,
+                    totalCount,
+                    hasMore: skip + take < totalCount,
+                }
+            },
+        })
+        t.field('posts', {
+            type: 'PostConnection',
+            args: {
+                take: intArg(), // Number of posts to fetch
+                skip: intArg(), // Number of posts to skip
+                id: idArg(), // Author ID (optional)
+            },
+            async resolve(_, { take = 10, skip = 0, id }, ctx) {
+                const authorId = id || (ctx.user ? ctx.user.id : null)
+
+                if (!authorId) {
+                    return { posts: [], totalCount: 0, hasMore: false }
+                }
+
+                const where = { authorId }
+
+                const posts = await ctx.prisma.post.findMany({
+                    skip,
+                    take,
+                    orderBy: { createdAt: 'desc' },
+                    where,
+                })
+
+                const totalCount = await ctx.prisma.post.count({ where })
 
                 return {
                     posts,
