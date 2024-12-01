@@ -1,4 +1,4 @@
-import { extendType, objectType } from 'nexus'
+import { extendType, objectType, stringArg } from 'nexus'
 import np from 'nexus-prisma'
 import { ensureAuthenticated } from '../ensureAuthenticated.js'
 
@@ -12,11 +12,18 @@ const User = objectType({
         t.field(np.User.email)
         t.field(np.User.avatar)
         t.list.field(np.User.comments)
-        t.list.field(np.User.posts)
+        t.field(np.User.posts)
         t.list.field(np.User.likes)
         t.list.field(np.User.followedBy)
         t.list.field(np.User.following)
         t.field(np.User.createdAt)
+        t.field('postCount', {
+            type: 'Int',
+            resolve(parent, _, ctx) {
+                return ctx.prisma.post.count({ where: { authorId: parent.id } })
+            },
+        })
+        t.field(np.User.bio)
     },
 })
 
@@ -30,6 +37,21 @@ const UserQueries = extendType({
 
                 const user = await context.prisma.user.findFirst({
                     where: { id: context.user.id },
+                })
+
+                if (!user) {
+                    throw new Error('User not found')
+                }
+
+                return user
+            },
+        })
+        t.field('userProfile', {
+            type: 'User',
+            args: { username: stringArg() },
+            resolve: async (_parent, args, context) => {
+                const user = await context.prisma.user.findFirst({
+                    where: { username: args.username },
                 })
 
                 if (!user) {
