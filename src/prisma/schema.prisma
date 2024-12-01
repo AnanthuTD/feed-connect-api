@@ -16,6 +16,7 @@ model User {
   fullName        String
   username        String         @unique
   avatar          String?
+  bio             String?        @default("")
   email           String?        @unique
   phone           String?        @unique
   password        String
