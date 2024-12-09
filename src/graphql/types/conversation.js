@@ -1,4 +1,4 @@
-import { extendType, objectType } from 'nexus'
+import { extendType, objectType, stringArg } from 'nexus'
 import np from 'nexus-prisma'
 import { ensureAuthenticated } from '../ensureAuthenticated.js'
 
@@ -11,6 +11,17 @@ export const Conversation = objectType({
         t.field(np.Conversation.messages)
         t.field(np.Conversation.participants)
         t.field(np.Conversation.participantsId)
+        t.field('participant', {
+            type: 'User',
+            resolve(parent, _, ctx) {
+                const otherParticipant = parent.participantsId.find(
+                    (participantId) => participantId !== ctx.user.id
+                )
+                return ctx.prisma.user.findFirst({
+                    where: { id: otherParticipant },
+                })
+            },
+        })
     },
 })
 
@@ -32,6 +43,25 @@ export const ConversationQuery = extendType({
                 } catch (error) {
                     console.log(error)
                     return []
+                }
+            },
+        })
+        t.field('conversation', {
+            type: 'Conversation',
+            args: { conversationId: stringArg() },
+            resolve: async (_, { conversationId }, { user, prisma }) => {
+                ensureAuthenticated({ user })
+                try {
+                    const conversation = await prisma.conversation.findFirst({
+                        where: {
+                            id: conversationId,
+                        },
+                    })
+
+                    return conversation
+                } catch (error) {
+                    console.log(error)
+                    return null
                 }
             },
         })

@@ -173,6 +173,7 @@ export interface NexusGenFieldTypes {
     lastActivityAt: NexusGenScalars['DateTime']; // DateTime!
     lastMessage: NexusGenRootTypes['Message'] | null; // Message
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
+    participant: NexusGenRootTypes['User'] | null; // User
     participants: NexusGenRootTypes['User'][]; // [User!]!
     participantsId: string[]; // [String!]!
   }
@@ -225,6 +226,7 @@ export interface NexusGenFieldTypes {
     totalCount: number | null; // Int
   }
   Query: { // field return type
+    conversation: NexusGenRootTypes['Conversation'] | null; // Conversation
     conversations: Array<NexusGenRootTypes['Conversation'] | null> | null; // [Conversation]
     getMessages: NexusGenRootTypes['MessageConnection'] | null; // MessageConnection
     getPosts: NexusGenRootTypes['PostConnection'] | null; // PostConnection
@@ -281,6 +283,7 @@ export interface NexusGenFieldTypeNames {
     lastActivityAt: 'DateTime'
     lastMessage: 'Message'
     messages: 'Message'
+    participant: 'User'
     participants: 'User'
     participantsId: 'String'
   }
@@ -333,6 +336,7 @@ export interface NexusGenFieldTypeNames {
     totalCount: 'Int'
   }
   Query: { // field return type name
+    conversation: 'Conversation'
     conversations: 'Conversation'
     getMessages: 'MessageConnection'
     getPosts: 'PostConnection'
@@ -411,6 +415,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    conversation: { // args
+      conversationId?: string | null; // String
+    }
     getMessages: { // args
       receiverId?: string | null; // String
       skip?: number | null; // Int

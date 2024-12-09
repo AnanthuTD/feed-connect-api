@@ -24,6 +24,7 @@ type Conversation {
   lastActivityAt: DateTime!
   lastMessage: Message
   messages: [Message!]!
+  participant: User
   participants: [User!]!
   participantsId: [String!]!
 }
@@ -96,6 +97,7 @@ type PostConnection {
 }
 
 type Query {
+  conversation(conversationId: String): Conversation
   conversations: [Conversation]
   getMessages(receiverId: String, skip: Int, take: Int): MessageConnection
   getPosts(skip: Int, take: Int): PostConnection
